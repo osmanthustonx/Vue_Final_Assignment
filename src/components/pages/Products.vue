@@ -230,6 +230,8 @@ export default {
         this.tempProduct = {};
         this.isNew = true;
       } else {
+
+        // item 存的是我們點選的物件值
         /* 因為物件是傳參考，所以用 this.tempProduct = item 這兩個值就會一樣
         ，所以用 es6 Object.assign() 把新的值寫道空的物件中，這樣就可以避免 item 有參考的特性 */
         this.tempProduct = Object.assign({}, item);
@@ -283,7 +285,6 @@ export default {
           vm.getProducts();
           this.$bus.$emit('message:push', '新增失敗', 'danger')
         }
-        // vm.products = response.data.products; 
       });
     },
     deleteProduct(){
