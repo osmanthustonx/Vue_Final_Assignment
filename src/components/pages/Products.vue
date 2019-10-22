@@ -290,7 +290,7 @@ export default {
     deleteProduct(){
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
-      this.$http.delete(api).then((response) => {
+      vm.$http.delete(api).then((response) => {
         console.log(response.data);
         if (response.data.success){
           $('#delProductModal').modal('hide');

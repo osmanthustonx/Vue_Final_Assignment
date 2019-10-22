@@ -28,6 +28,8 @@
           <td>
             <button class="btn btn-outline-primary btn-sm" 
                 @click="openModal(false, item)">編輯</button>
+            <button class="btn btn-outline-danger btn-sm" 
+                @click="openDeleteModal(item)">刪除</button>
           </td>
         </tr>
         <tr>
@@ -37,26 +39,26 @@
     </table>
 
     <!-- pagination -->
-    <!-- <nav aria-label="Page navigation example">
+    <nav aria-label="Page navigation example">
       <ul class="pagination">
         <li class="page-item" :class="{'disabled': !pagination.has_pre}"
-            @click.prevent="getProducts(pagination.current_page - 1)">
+            @click.prevent="getCoupon(pagination.current_page - 1)">
           <a class="page-link" href="#" aria-label="Previous">
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
         <li class="page-item" v-for="page in pagination.total_pages" :key="page"
             :class="{'active': pagination.current_page === page}">
-          <a class="page-link" href="#" @click.prevent="getProducts(page)">{{page}}</a>
+          <a class="page-link" href="#" @click.prevent="getCoupon(page)">{{page}}</a>
         </li>
         <li class="page-item" :class="{'disabled': !pagination.has_next}"
-            @click.prevent="getProducts(pagination.current_page + 1)">
+            @click.prevent="getCoupon(pagination.current_page + 1)">
           <a class="page-link" href="#" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
       </ul>
-    </nav> -->
+    </nav>
 
     <!-- Modal -->
     <!-- 新增的 Modal -->
@@ -119,6 +121,31 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="delCouponModal" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content border-0">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="exampleModalLabel">
+              <span>刪除產品</span>
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            是否刪除 <strong class="text-danger">{{ tempCoupon.title }}</strong> 商品(刪除後將無法恢復)。
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-danger"
+              @click="deleteCoupon"
+              >確認刪除</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -131,6 +158,7 @@ export default {
     return {
       coupons:[],
       tempCoupon:{},
+      pagination:{},
       isNew:false,
       isLoading:false,
     }
@@ -144,6 +172,7 @@ export default {
         // console.log(response.data);
         vm.isLoading = false;
         vm.coupons = response.data.coupons;
+        vm.pagination = response.data.pagination;
       })
     },
     openModal(isNew,item){
@@ -173,6 +202,26 @@ export default {
           $("#couponModal").modal('hide');
           vm.getCoupon();
           this.$bus.$emit('message:push', '新增失敗', 'danger');
+        }
+      })
+    },
+    openDeleteModal(item){
+      this.tempCoupon = item;
+      $("#delCouponModal").modal('show');
+    },
+    deleteCoupon(){
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`;
+      vm.$http.delete(api).then((response)=>{
+        console.log(response.data);
+        if (response.data.success) {
+          $('#delCouponModal').modal('hide');
+          vm.getCoupon();
+          console.log(response.data.message);
+        } else {
+          $('#delCouponModal').modal('hide');
+          vm.getCoupon();
+          console.log(response.data.message);
         }
       })
     }
