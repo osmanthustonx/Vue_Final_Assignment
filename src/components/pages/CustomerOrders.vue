@@ -130,58 +130,54 @@
     </div>
 
     <div class="my-5 row justify-content-center">
-      <form class="col-md-6" @submit.prevent="payOrder">
-        <table class="table">
-          <thead>
-            <th>品名</th>
-            <th>數量</th>
-            <th>單價</th>
-          </thead>
-          <tbody>
-            <!-- <tr v-for="item in order.products" :key="item.id">
-              <td class="align-middle">{{ item.product.title }}</td>
-              <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
-              <td class="align-middle text-right">{{ item.final_total }}</td>
-            </tr> -->
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="2" class="text-right">總計</td>
-              <!-- <td class="text-right">{{ order.total }}</td> -->
-            </tr>
-          </tfoot>
-        </table>
-
-        <table class="table">
-          <tbody>
-            <tr>
-              <th width="100">Email</th>
-              <!-- <td>{{ order.user.email }}</td> -->
-            </tr>
-            <tr>
-              <th>姓名</th>
-              <!-- <td>{{ order.user.name }}</td> -->
-            </tr>
-            <tr>
-              <th>收件人電話</th>
-              <!-- <td>{{ order.user.tel }}</td> -->
-            </tr>
-            <tr>
-              <th>收件人地址</th>
-              <!-- <td>{{ order.user.address }}</td> -->
-            </tr>
-            <tr>
-              <th>付款狀態</th>
-              <td>
-                <!-- <span v-if="!order.is_paid">尚未付款</span> -->
-                <!-- <span v-else class="text-success">付款完成</span> -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- <div class="text-right" v-if="order.is_paid === false">
-          <button class="btn btn-danger">確認付款去</button>
-        </div> -->
+      <form class="col-md-6" @submit.prevent="createOrder">
+        <div class="form-group">
+          <label for="useremail">Email</label>
+          <input type="email" class="form-control" name="email" id="useremail"
+            v-model="form.user.email"
+            v-validate="'required|email'"
+            :class="{'is-invalid':errors.has('email')}"
+            placeholder="請輸入 Email">
+          <span class="text-danger" v-if="errors.has('email')">{{errors.first('email')}}</span>
+        </div>
+      
+        <div class="form-group">
+          <label for="username">收件人姓名</label>
+          <input type="text" class="form-control" name="name" id="username"
+            v-model="form.user.name" 
+            v-validate="'required'" 
+            :class="{'is-invalid':errors.has('name')}" 
+            placeholder="輸入姓名" />
+            <span class="text-danger" v-if="errors.has('name')">必須輸入姓名</span>
+        </div>
+      
+        <div class="form-group">
+          <label for="usertel">收件人電話</label>
+          <input type="tel" class="form-control" id="usertel" name="tel"
+            v-model="form.user.tel" 
+            :class="{'is-invalid':errors.has('tel')}"
+            v-validate="'required|digits:10'"
+            placeholder="請輸入電話">
+          <span class="text-danger" v-if="errors.has('tel')">必須輸入電話</span>
+        </div>
+      
+        <div class="form-group">
+          <label for="useraddress">收件人地址</label>
+          <input type="text" class="form-control" name="address" id="useraddress" 
+            v-model="form.user.address"
+            v-validate="'required'"
+            :class="{'is-invalid':errors.has('address')}" 
+            placeholder="請輸入地址">
+          <span class="text-danger" v-if="errors.has('address')">地址欄位不得留空</span>
+        </div>
+      
+        <div class="form-group">
+          <label for="comment">留言</label>
+          <textarea name="" id="comment" class="form-control" cols="30" rows="10" v-model="form.message"></textarea>
+        </div>
+        <div class="text-right">
+          <button class="btn btn-danger">送出訂單</button>
+        </div>
       </form>
     </div>
   </div>
@@ -202,15 +198,13 @@ export default {
         loadingItem: '',
       },
       form:{
-        data:{
-          user: {
+        user: {
           name: "",
           email: "",
           tel: "",
           address: ""
         },
         message: ""
-        }
       },
       isLoading:false,
       coupon_code:"",
@@ -283,6 +277,27 @@ export default {
         vm.getCart(); 
         vm.isLoading = false; 
       });
+    },
+    createOrder(){
+      const vm = this; 
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order `;
+      vm.isLoading = true;
+      this.$validator.validate().then((valid) => {
+        if (valid) {
+          console.log('驗證成功')
+          this.$http.post(api,{data:vm.form}).then((response) => {
+            console.log('訂單已建立',response);
+            if(response.data.success){
+              vm.$router.push(`/customer_checkout/${response.data.orderId}`)
+            }
+            vm.isLoading = false;
+          });
+        } else {
+          console.log("欄位不完整");
+          vm.isLoading = false;
+        }
+      });
+      
     }
   },
   created(){
