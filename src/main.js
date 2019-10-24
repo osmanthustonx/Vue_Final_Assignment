@@ -5,18 +5,24 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Loading from 'vue-loading-overlay'; // 是元件所以可以用全域的方式載入
 import 'vue-loading-overlay/dist/vue-loading.css';
-import 'bootstrap'
+import 'bootstrap';
+import VeeValidate, { Validator } from 'vee-validate'   //匯入檔案
+import TW from 'vee-validate/dist/locale/zh_TW'    //匯入語言包
 
 import App from './App';
 import router from './router';
 import './bus';
 import currencyFilter from './filters/currency';
+import formatFilter from './filters/dateformat';
 
 Vue.use(VueAxios, axios);
+Vue.use(VeeValidate)  //啟用API
+Validator.localize('zh-TW', TW)  //啟用語言包
 
 // 全域載入
 Vue.component('Loading',Loading);
 Vue.filter('currency',currencyFilter);
+Vue.filter('format',formatFilter);
 
 Vue.config.productionTip = false;
 

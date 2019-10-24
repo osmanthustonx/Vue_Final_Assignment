@@ -109,7 +109,7 @@
                       placeholder="請輸入分類">
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="price">單位</label>
+                    <label for="unit">單位</label>
                     <input type="unit" class="form-control" id="unit"
                       v-model="tempProduct.unit"
                       placeholder="請輸入單位">
