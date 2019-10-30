@@ -37,6 +37,7 @@
         </div>
       </div>
     </div>
+    
     <!-- 購物車 modal -->
     <div class="modal fade" id="productModal" tabindex="-1" role="dialog"
       aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -72,23 +72,19 @@ export default {
     getOrder(){
       const vm = this; 
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order/${vm.orderId}`;
-      vm.isLoading = true; 
       this.$http.get(api).then((response) => {
         vm.order = response.data.order;
         console.log(vm.order);
-        vm.isLoading = false; 
       }); 
     },
     payOrder(){
       const vm = this; 
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/pay/${vm.orderId}`;
-      vm.isLoading = true; 
       this.$http.post(api).then((response) => { 
         console.log(response);
         if (response.data.success) {
           vm.getOrder(); 
         }
-        vm.isLoading = false; 
       });  
     }
   },

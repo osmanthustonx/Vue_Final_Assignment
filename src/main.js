@@ -16,7 +16,7 @@ import currencyFilter from './filters/currency';
 import formatFilter from './filters/dateformat';
 
 Vue.use(VueAxios, axios);
-Vue.use(VeeValidate)  //啟用API
+Vue.use(VeeValidate);  //啟用API
 Validator.localize('zh-TW', TW)  //啟用語言包
 
 // 全域載入
